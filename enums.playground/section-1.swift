@@ -14,8 +14,6 @@ enum SocialNetworkType {
     case Twitter
 }
 
-M_PI*2
-
 class SocialNetwork {
     let type: SocialNetworkType
     
