@@ -1,4 +1,4 @@
-# Created by https://www.gitignore.io
+#Created by https://www.gitignore.io
 
 ### Swift ###
 # Xcode
@@ -18,7 +18,9 @@ xcuserdata
 DerivedData
 *.hmap
 *.ipa
-*.xcuserstate
+*.xcuserstatea
+*.xcplayground
+*.xctimeline
 
 #OSX
 .DS_Store
