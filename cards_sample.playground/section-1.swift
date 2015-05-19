@@ -105,6 +105,7 @@ struct CardDeck {
 
 class CardDeckFactory {
     
+    //private constructor
     private init(){}
     
     class func newDeck() -> CardDeck {
@@ -124,5 +125,4 @@ class CardDeckFactory {
 }
 
 let cardDeck = CardDeckFactory.newDeck()
-
 cardDeck.show()
