@@ -101,7 +101,7 @@ NSMutableArray *array2 = array1;
 // array1: [5,8,2,10]
 // array2: [5,8,2,10]
 
-As we see, if we change the array object through either of these two variables, the same 
+As we see, if we change the array object through either of these two variables, the same
 array object is modified
 
 .....VALUE TYPES....
