@@ -72,8 +72,8 @@ enum Suit: Int {
 /** CARD **/
 
 struct Card {
-    var rank: Rank
-    var suit: Suit
+    let rank: Rank
+    let suit: Suit
     
     init(rank: Rank, suit: Suit) {
         self.rank = rank
@@ -88,7 +88,7 @@ struct Card {
 /** CARD DECK **/
 
 struct CardDeck {
-    var cards: [Card]
+    let cards: [Card]
     
     init(cards: [Card]){
         self.cards = cards
@@ -120,7 +120,6 @@ class CardDeckFactory {
         }
         
         return CardDeck(cards: fullDeck)
-        
     }
 }
 
