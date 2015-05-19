@@ -39,7 +39,7 @@ var socialNetworkPage = SocialNetworkPage(
 
 enum SpecialNumber: Double {
     //Special numbers aproxs. 
-    //(enums do not allow to set as raw value an external constants like mathematical funcs starting with M_ ....)
+    //(enums do not allow to set as raw value an external constants like mathematical consts. starting with M_ ....)
     case Pi = 3.14159265358979
     case Phi = 1.618033988
     case Tau = 6.28318530717959
