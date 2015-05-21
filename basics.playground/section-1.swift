@@ -1,5 +1,3 @@
-// Playground - noun: a place where people can play
-
 import Foundation
 
 /***
@@ -129,6 +127,20 @@ func getFirstNaturalNumbers() -> (first: Int, second: Int, third: Int) {
     return (1, 2, 3)
 }
 
+//IN-OUT ARGS
+func swapTwoInts(inout oneInt firstInt: Int, inout secondInt otherInt: Int) {
+    let temp = firstInt
+    firstInt = otherInt
+    otherInt = temp
+}
+
+var oneInt = 8
+var secondInt = 12
+swapTwoInts(oneInt: &oneInt, secondInt: &secondInt)
+println("oneInt is now \(oneInt), and secondInt is now \(secondInt)")
+
+
+/*** CLOSURES **/
 
 //you can write a closure without a name by surrounding code with braces ({}).
 //Use in to separate the arguments and return type from the body.
@@ -188,7 +200,177 @@ value. In both cases, the value of the whole expression is an optional value.
 let optionalSquare: Square? = Square(sideLength: 2.5, name: "optional square")
 let sideLength = optionalSquare?.sideLength
 **/
-    
+
+
+//constants and variables can contain almost any character, including unicode characters,
+//but cannot contain whitespace chars, math symbols, arrows, and other
+
+//if you need to give a constant or variable the same name as a reserved Swift keyword, 
+//surround the keyword with back ticks (`) when using it as a name, but 
+//avoid it, unless you have absolutely no choice.
     
 
+/*** STRING INTERPOLATION 
+Include name of a constant or variable as a placeholder in a longer
+string and to prompt swift to replace it with the current value
+of that constants or variable.
+***/
+
+var catName = "Garfield"
+
+println("Our cat name is \(catName)")
+
+
+/*** Type Aliases 
+define an alternative name for an existing type. 
+Type aliases are useful when you want to refer to an existing type
+by a name that is contextually more appropiate, such as when working
+with data of a specific size from an external source:
+***/
+typealias AudioSample = UInt16
+var maxAmplitudeFound = AudioSample.min
+
+
+/**** TUPLES 
+Tuples group multiple values into a single compound value. The values
+within a tuple can be of any type and do not have to be of the same type
+as each other.
+You can create tuples from any permutation of types, and they can contain
+as mani different types as you like.
+***/
+
+//you can decompose a tuple's content into separate constants or variables
+//which you then access as usual
+let (statusCode, statusMessage) = (404, "Not found")
+println("The status code is \(statusCode) and status message is \(statusMessage)")
+
+//to ignore some of the tuple's values, ifnore parts with an underscore (_)
+let (justTheStatusCode, _) = (404, "Not found")
+
+//Alternatively, access the individual element values in a tuple using
+//index numbers starting at zero:
+let http404Error = (404, "Not found")
+println("The status code is \(http404Error.0) and status message is \(http404Error.1)")
+
+//you can name the individual elements in a tuple when the tuple is defined
+let http200Status = (statusCode: 200, description: "OK")
+println("The status code is \(http200Status.statusCode) and status message is \(http200Status.description)")
+
+//NOTE: tuples are useful for temporary groups of related values
+//if your data structure is likely to persist beyond a temporary scope,
+//model it as a clas or structure rather than a tuple.
+
+
+/*** OPTIONALS ***/
+
+let possibleNumber = "123"
+let convertedNumber = possibleNumber.toInt()
+
+let notANumber = "123sfsd"
+let convertedNotANumber = notANumber.toInt() // this returns nil
+
+//NOTE: nil cannot be used with nonoptional constants and variables,
+//if a constant or variable needs to work with the absence of a value
+//under certain conditions, always declare it as an optional value of
+//the appropiate type.
+var serverResponseCode: Int? = 404
+serverResponseCode = nil
+
+//if you define an optional var. without providing a default value,
+//then the variable is automatically set to nil
+
+//IMPORTANT! -> in Swift nil is not a pointer to a nonexistent object,
+//(like in Obj. C), it is the absence of a value of a certain type.
+
+/** forced unwrapping
+once you're sure that the optional does contain a value, you can access
+its underlying value by adding an exclamation mark (!) to the
+end of the optional's name
+**/
+
+let optNumber: Int? = 204
+
+if optNumber != nil {
+    println("possibleNumber has an integer value of \(optNumber!)")
+}
+//if we would not control that the optional contains a value,
+//then when trying to use ! to access a non-existent opt value
+//triggers a runtime error.
         
+/*** optional binding 
+We use optional binding to find out whether an optional contains a value,
+and if so, to make that value available as a temporary constant or 
+variable. In this case there is not need to use the ! suffic to access
+its value.
+***/
+
+if let actualNumber = possibleNumber.toInt() {
+    println("\'\(possibleNumber)\' has an integer value of \(actualNumber)")
+} else {
+    println("\'\(possibleNumber)\' could not be converted to an integer")
+}
+
+/*** implicitly unwrapped optionals
+Somettimes, it is clear from a program's structure that an optional will
+always have a value, after the value is first set. In these cases it is 
+useful to remove the need to check and unwrap the optional's value
+every time it is accessed, because it can be safely assumed to have
+a value all of the time 
+These kind of optionals are defined as implicitly unwrapped optionals.
+They are written with an exclamation mark rather than a question mark.
+**/
+let possibleString: String? = "An optional string."
+let forcedString: String = possibleString!
+
+let assumedString: String! = "An implicitly unwrapped optional string."
+let implicitString: String = assumedString
+
+
+
+/*** ASSERTIONS 
+Optionals enable to check for values that may or may not exist.
+In some cases, however, it is simply not possibe for your code
+to continue execution if a value does not exist, or if a provided
+value does not satisfy certain conditions --> trigger assertion in
+the code to end code executions and provide an opportunity to debug
+the case of the absent or invalid value.
+***/
+
+let age = -3
+//assert(age >= 0, "A person's age cannot be less than zero")
+
+//here age is not same or greater than zero, so the assertion is triggered,
+//would terminate the application
+
+
+/**** BASIC OPERATORS ****/
+
+/**
+-Unary -> !b, i++ ...
+-Binary -> two targets -> 2 + 3
+-Ternary -> a ? b : c
+**/
+
+//floating-point remainder calculations
+8 % 2.5 // equals 0.5
+
+
+/** Nil Coalescing Operator (a ?? b)
+Unwraps an optional a if it contains a value, or returns a default b if a is nil.
+**/
+let defaultColorName = "red"
+var userDefinedColorName : String?
+
+var colorNameToUse = userDefinedColorName ?? defaultColorName
+
+
+
+/** NOTES
+-Swift's native String type is build from Unicode scalar values -> a unique 21-bite number for a char or modifier.
+-Apart from the usual special chars as \0 \\ \t \n ... an arbitrary Unicode scalar written as \u{n}, where n is a 1-8 hexadecimal number with a value equal to a valid Unicode code point.
+*/
+
+let blackHeart = "\u{2665}"      // ♥,  Unicode scalar U+2665”
+
+
+
