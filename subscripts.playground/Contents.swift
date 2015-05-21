@@ -49,7 +49,7 @@ struct Matrix {
         set {
             assert(indexIsValidForRow(row, column: column), "Index out of range")
             grid[(row * columns) + column] = newValue
-        }
+        }g
     }
 }
 
@@ -57,5 +57,5 @@ var matrix = Matrix(rows: 2, columns: 2)
 matrix[0, 1] = 1.5
 matrix[1, 0] = 3.2
 
-let someValue = matrix[2, 2]
+//let someValue = matrix[2, 2]
 //this triggers an assert, because [2, 2] is outside of the matrix bounds
