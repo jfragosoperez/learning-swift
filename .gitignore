@@ -23,6 +23,7 @@ DerivedData
 *.xctimeline
 *.playgrounddata
 playground.xcworkspace/
+Sources/
 
 #OSX
 .DS_Store
