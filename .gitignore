@@ -21,6 +21,7 @@ DerivedData
 *.xcuserstatea
 *.xcplayground
 *.xctimeline
+*.playgrounddata
 
 #OSX
 .DS_Store
