@@ -49,7 +49,7 @@ struct Matrix {
         set {
             assert(indexIsValidForRow(row, column: column), "Index out of range")
             grid[(row * columns) + column] = newValue
-        }g
+        }
     }
 }
 
