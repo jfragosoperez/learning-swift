@@ -244,3 +244,192 @@ number73WithWeakReferenceToTenant = nil
 
 
 
+/*** UNOWNED REFERENCES
+Unlike a weak reference, an unowned reference is assumed to always have a value. Because
+of this, an unowned reference is always defined as non-optional type. An unwoned reference 
+can always be accessed directly. However, ARC cannot set the reference to nil when
+the instance it refers to is deallocated, because variables of a non-optional type
+cannot be set to nil.
+
+If we try to access an unowned reference after the instance that it references is 
+deallocated, we will trigger a runtime error, so we need to use unowned references
+only when we are sure that the reference will always refer to an instance. The app will
+crash, we will never encounter unexpected behaviour in this situation. **/
+
+//e.g. credit card and customer
+//a customer has an optional card property, but the credit card has a non-optional customer
+//property. A credit card will always have a customer, so we define its customer property
+//as an unowoned reference, to avoid a strong reference cycle.
+
+class Customer {
+    let name: String
+    var card: CreditCard?
+    
+    init(name: String) {
+        self.name = name
+    }
+    
+    deinit {
+        println("\(name) is being deinitialized")
+    }
+}
+
+class CreditCard {
+    let number: UInt64
+    unowned let customer: Customer
+    
+    init(number: UInt64, customer: Customer) {
+        self.number = number
+        self.customer = customer
+    }
+    
+    deinit {
+        println("Card #\(number) is being deinitialized")
+    }
+}
+
+var customer: Customer?
+customer = Customer(name: "John Appleseed")
+customer!.card = CreditCard(number: 1234_5678_9012_3456, customer: customer!)
+
+//if we deallocate the customer, there are no more strong references to the customer
+//instance and after this happens, there are no more strong references to credit card
+//instance and it too is deallocated.
+customer = nil
+
+
+
+/*** Unowned references and implicitly unwrapped optional properties
+Scenario in which both properties should always have a value and neither property should
+ever be nil once initialization is complete.
+In this scenario it is useful to combine an unowned property on one class with
+an implicitly unwrapped optional property on the other class.
+***/
+
+//e.g. country and city each of which stores an instance of the other class as a
+//property. Every country must always have a capital city and every city must always
+//belong to a country.
+
+
+class City {
+    let name: String
+    unowned let country: Country
+    
+    init(name: String, country: Country) {
+        self.name = name
+        self.country = country
+    }
+}
+
+class Country {
+    let name: String
+    //the cope with this requirement, you declare the capitalCity prop. of Country
+    //as an implicitly unwrapped optional property. This means that the capitalCity
+    //prop. has a default value of nil, but can be accessed without the need
+    //to unwrap its value.
+    var capitalCity: City!
+    
+    init(name: String, capitalName: String) {
+        self.name = name
+        self.capitalCity = City(name: capitalName, country: self)
+    }
+}
+
+//All of this means that you can create the Country and City instances in a single statement, 
+//without creating a strong reference cycle, and the capital city property can be accessed
+//directly without needing to use an exclamation mark to unwrap its optional value.
+var country = Country(name: "Canada", capitalName: "Ottawa")
+println("\(country.name)'s capital city is called \(country.capitalCity.name)")
+
+
+
+/** STRONG REFERENCE CYCLES FOR CLOSURES
+We've seen the strong reference cycle. Closures, like classes, are reference types.
+When you assign a closure to a property, you are assigning a reference to that closure.
+****/
+
+//e.g. that shows how to create a strong reference cycle when using a closure that references
+//self
+
+class HTMLElement {
+    let name: String
+    let text: String?
+    
+    lazy var asHtml: () -> String = {
+        if let text = self.text {
+            return "<\(self.name)>\(text)</\(self.name)>"
+        } else {
+            return "<\(self.name) />"
+        }
+    }
+    
+    init(name: String, text: String? = nil) {
+        self.name = name
+        self.text = text
+    }
+    
+    deinit {
+        println("\(name) is being deinitialized")
+    }
+}
+
+//As we see html element defines a lazy property called asHTML that references a closure
+//that combines name and text into an HTML string fragment. 
+//asHTML property is of type () -> String, or "function that takes no params and returns
+//a String value".
+
+//The asHTML property is name and used somewhat like an instance method, but asHTML is 
+//a closure property rather than an instance method, you can replace the default 
+//value of the asHTML property with a custom closure, if you want to change the HTML
+//rendering for a particular HTML element.
+
+var paragraph: HTMLElement? = HTMLElement(name: "p", text: "hello, world")
+println(paragraph!.asHtml())
+
+//The HTMLElement class creates a strong reference cycle between an HTMLElement instance
+//and the closure used for its default asHTML value.
+
+
+//to resolve a strong reference cycle between a closure and a class instance by defining
+//a capture list as part of the closure's definition. A capture list defines the rules
+//to use when capturing one or more reference types within the closure's body. As with
+//strong reference cycles between to class instances, you declare each captures reference
+//to be a weak or unowned reference rather than a strong reference.
+
+
+/** defining a capture list ***/
+
+class HTMLElementWithNoStrongReferenceCycle {
+    let name: String
+    let text: String?
+    
+    lazy var asHTML: () -> String = {
+        [unowned self] in
+        if let text = self.text {
+            return "<\(self.name)>\(text)</\(self.name)>"
+        } else {
+            return "<\(self.name) />"
+        }
+    }
+    
+    init(name: String, text: String? = nil) {
+        self.name = name
+        self.text = text
+    }
+    
+    deinit {
+        println("\(name) is being deinitialized")
+    }
+}
+
+//here the capture list is [unowned self] which means capture self as an unowned reference
+//rather than a strong reference
+
+var paragraph2: HTMLElementWithNoStrongReferenceCycle? =
+    HTMLElementWithNoStrongReferenceCycle(name: "p", text: "hello, world")
+println(paragraph2!.asHTML())
+
+//now if we set paragraph to nil, the htmlelement instance is deallocated
+paragraph2 = nil
+
+
